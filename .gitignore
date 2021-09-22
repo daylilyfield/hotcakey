@@ -1,0 +1,7 @@
+/build/
+/node_modules/
+
+.cache/
+
+MEMO.md
+compile_commands.json
