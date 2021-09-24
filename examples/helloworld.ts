@@ -3,7 +3,7 @@ import hotcakey from '../'
 async function main() {
   await hotcakey.activate()
 
-  console.log('hotcakey baked!')
+  console.log('--- hotcakey baked ---')
 
   const subscription = hotcakey.register(['shift', 'space'], (event) => {
     console.log('%s: shift + space at %d', event.type, event.time)
@@ -13,7 +13,13 @@ async function main() {
 
   subscription()
 
-  console.log('unsubscribed')
+  console.log('--- unsubscribed ---')
+
+  await new Promise((resolve) => setTimeout(resolve, 5000))
+
+  await hotcakey.inactivate()
+
+  console.log('--- inactivated ---')
 }
 
 main()

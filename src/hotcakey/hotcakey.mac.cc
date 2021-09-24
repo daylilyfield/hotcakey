@@ -1,3 +1,4 @@
+#include <atomic>
 #include <carbon/carbon.h>
 #include <cstdint>
 #include <ctime>
@@ -5,6 +6,8 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <mutex>
+#include <condition_variable>
 #include <pthread.h>
 
 #include "./hotcakey.h"
@@ -24,8 +27,8 @@ std::atomic<bool> isActive(false);
 
 std::unordered_map<hotcakey::Registration, const Listener*> listeners;
 
-pthread_mutex_t mutex;
-pthread_cond_t cond;
+std::mutex mutex;
+std::condition_variable cond;
 
 hotcakey::Registration eventHotKeyIdSequence = 0;
 
@@ -55,7 +58,7 @@ OSStatus HandleKeyEvent(EventHandlerCallRef nextHandler, EventRef event, void* d
   		sizeof(EventHotKeyID),
   		NULL,
   		&eventHotKeyId);
-  
+
   auto listener = listeners.at(eventHotKeyId.id);  
   
   switch (GetEventKind(event)) {
@@ -259,59 +262,58 @@ Result Activate() {
     return Result::kSuccess;
   }
 
-  isActive.store(true, std::memory_order_release);
-
-  pthread_mutex_init(&mutex, NULL);
-  pthread_cond_init(&cond, NULL);
-  pthread_mutex_lock(&mutex);
-
-  nativeThread = std::thread([] {
-    LOG("native thread started");
-
-    pthread_mutex_lock(&mutex);
-
-    auto status = InstallKeyEventHandler();
-
-    if (status != noErr) {
-      LOG("application event handler installation failed with status:" << status);
-      return;
-    }
-
-    LOG("application event handler installed");
-
-    pthread_cond_signal(&cond);
-    pthread_mutex_unlock(&mutex);
-
-    LOG("start message loop");
-
-    EventTargetRef target = GetEventDispatcherTarget();
-    while(isActive.load(std::memory_order_acquire)) {
-      EventRef event;	  
-      if (ReceiveNextEvent(0, NULL, (kEventDurationSecond / 10), true, &event) == noErr) {
-      	SendEventToEventTarget (event, target);
-      	ReleaseEvent(event);
+  {
+    std::unique_lock<std::mutex> lock(mutex);
+  
+    nativeThread = std::thread([] {
+      LOG("native thread started");
+  
+      auto status = InstallKeyEventHandler();
+  
+      if (status != noErr) {
+        LOG("application event handler installation failed with status:" << status);
+        return;
       }
-      pthread_testcancel();
+  
+      LOG("application event handler installed");
+
+      {
+        std::lock_guard<std::mutex> lock(mutex);
+        isActive.store(true, std::memory_order_release);
+      }
+  
+      cond.notify_one();
+  
+      LOG("start message loop");
+  
+      EventTargetRef target = GetEventDispatcherTarget();
+      while(isActive.load(std::memory_order_acquire)) {
+        EventRef event;	  
+        if (ReceiveNextEvent(0, NULL, (kEventDurationSecond / 10), true, &event) == noErr) {
+        	SendEventToEventTarget (event, target);
+        	ReleaseEvent(event);
+        }
+        pthread_testcancel();
+      }
+  
+      LOG("message loop stopped");
+    });
+  
+    pthread_attr_t hook_thread_attr;
+    pthread_attr_init(&hook_thread_attr);
+  
+    int policy;
+    pthread_attr_getschedpolicy(&hook_thread_attr, &policy);
+  
+    struct sched_param param;
+    param.sched_priority = sched_get_priority_max(policy);
+  
+    if (pthread_setschedparam(nativeThread.native_handle(), SCHED_OTHER, &param) != 0) {
+      LOG("failed to set priority");
     }
-
-    LOG("message loop stopped");
-  });
-
-  pthread_attr_t hook_thread_attr;
-  pthread_attr_init(&hook_thread_attr);
-
-  int policy;
-  pthread_attr_getschedpolicy(&hook_thread_attr, &policy);
-
-  struct sched_param param;
-  param.sched_priority = sched_get_priority_max(policy);
-
-  if (pthread_setschedparam(nativeThread.native_handle(), SCHED_OTHER, &param) != 0) {
-    LOG("failed to set priority");
+  
+    cond.wait(lock, [] { return isActive.load(std::memory_order_acquire); });
   }
-
-  pthread_cond_wait(&cond, &mutex);
-  pthread_mutex_unlock(&mutex);
 
   LOG("thread priority successfully updated");
 
@@ -321,7 +323,31 @@ Result Activate() {
 Result Inactivate() {
   LOG("deactivate hotcakey");
 
+  LOG("unregister all event listeners");
+
+  for (auto [key, value] : listeners) {
+    if (value->eventRef == nullptr) continue;
+    auto status = UnregisterEventHotKey(value->eventRef);
+
+    if (status != noErr) {
+      LOG("failed to unregister listener with id: " << value->registration << " and status: " << status);
+      continue;
+    }
+
+    delete value;
+
+    LOG("successfully unregister listener with id: " << value->registration);
+  }
+
+  listeners.clear();
+
   isActive.store(false, std::memory_order_release);
+
+  LOG("try to join event target thread");
+
+  nativeThread.join();
+
+  LOG("successfully shutdown");
 
   return kSuccess;
 }
@@ -381,6 +407,11 @@ Result Unregister(const Registration &registration) {
   }
 
   LOG("unregistered hotkey");
+
+  delete listener;
+
+  listeners.erase(registration);
+
   return kSuccess;
 }
 

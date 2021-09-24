@@ -13,7 +13,7 @@ class ActivationWorker : public Napi::AsyncWorker {
 
 public:
   ActivationWorker(const Napi::Env& env, const Napi::Promise::Deferred& deferred)
-  :Napi::AsyncWorker(env), deferred(deferred) {
+  : Napi::AsyncWorker(env), deferred(deferred) {
   }
 
   void Execute () {
@@ -42,6 +42,44 @@ public:
     }
   }
     
+private:
+  Napi::Promise::Deferred deferred;
+  hotcakey::Result result;
+};
+
+class InactivationWorker : public Napi::AsyncWorker {
+
+public:
+  InactivationWorker(const Napi::Env& env, const Napi::Promise::Deferred& deferred)
+  : Napi::AsyncWorker(env), deferred(deferred) {
+  }
+
+  void Execute () {
+    result = hotcakey::Inactivate();
+  }
+
+  void OnError(const Napi::Error& e) {
+     Napi::HandleScope scope(Env());
+     deferred.Reject(Napi::String::New(Env(), "failure"));
+  }
+
+  void OnOK() {
+    Napi::HandleScope scope(Env());
+
+    LOG("inactivation callback called");
+
+    switch (result) {
+    case hotcakey::Result::kSuccess:
+      LOG("inactivation finished with status: success");
+      deferred.Resolve(Napi::String::New(Env(), hotcakey::ToString(result)));
+      break;
+    default:
+      LOG("inactivation finished with status: failure");
+      deferred.Reject(Napi::String::New(Env(), hotcakey::ToString(result)));
+      break;
+    }
+  }
+
 private:
   Napi::Promise::Deferred deferred;
   hotcakey::Result result;
@@ -137,11 +175,23 @@ Napi::Promise Activate(const Napi::CallbackInfo& info) {
   return deferred.Promise();
 }
 
+Napi::Promise Inactivate(const Napi::CallbackInfo& info) {
+  LOG("start exported function `Inactivate`");
+
+  auto env = info.Env();
+  auto deferred = Napi::Promise::Deferred::New(info.Env());
+
+  auto worker = new InactivationWorker(env, deferred);
+  worker->Queue();
+
+  return deferred.Promise();
+}
+
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
   LOG("initialize napi export object");
 
   exports["activate"] = Napi::Function::New(env, Activate);
-  // exports["inactivate"] = Napi::Function::New(env, Activate);
+  exports["inactivate"] = Napi::Function::New(env, Inactivate);
   exports["register"] = Napi::Function::New(env, Register);
 
   return exports;
