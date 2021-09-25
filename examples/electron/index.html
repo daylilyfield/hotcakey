@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>hotcakey example for electron</title>
+    <script>
+      const u = (callback) => () => {
+        const state = document.getElementById('state')
+        state.innerHTML = callback()
+      }
+
+      window.ipcRenderer.on(
+        'keydown',
+        u(() => {
+          return 'pressed'
+        })
+      )
+
+      window.ipcRenderer.on(
+        'keyup',
+        u(() => {
+          return 'released'
+        })
+      )
+    </script>
+  </head>
+  <body>
+    <h1>🥞 hotcakey 🥞</h1>
+    <div>shift + option key is`</div>
+    <div id="state">released</div>
+  </body>
+</html>

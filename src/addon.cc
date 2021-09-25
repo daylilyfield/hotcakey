@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <thread>
 #include <chrono>
+#include <unordered_map>
 #include <napi.h>
 
 #include "./hotcakey/hotcakey.h"
@@ -8,6 +9,8 @@
 #include "./hotcakey/utils/logger.h"
 
 namespace {
+
+std::unordered_map<hotcakey::Registration, Napi::ThreadSafeFunction> tsfs;
 
 class ActivationWorker : public Napi::AsyncWorker {
 
@@ -145,7 +148,7 @@ Napi::Value Register(const Napi::CallbackInfo& info) {
       delete value;
     };
 
-    LOG("callback " << event.type << " at " << event.time);
+    LOG("callback " << hotcakey::ToString(event.type) << " at " << event.time);
 
     auto value = new hotcakey::Event(event.type, event.time);
     auto status = listener.BlockingCall(value, wrapper);
@@ -155,12 +158,25 @@ Napi::Value Register(const Napi::CallbackInfo& info) {
     }
   });
 
-  if (result == hotcakey::Result::kSuccess) {
-    auto data = new hotcakey::Registration(registration);
-    return Napi::Function::New(env, Unregister, "Unregister", data);
+  if (result != hotcakey::Result::kSuccess) {
+    // otherwise you cannot shutdown node.js main loop
+    listener.Release();
+    return env.Undefined();
   }
 
-  return env.Undefined();
+  tsfs[registration] = listener;
+
+  auto data = new hotcakey::Registration(registration);
+  return Napi::Function::New(env, Unregister, "Unregister", data);
+}
+
+void ClearThreadSafeFunctions() {
+  if (tsfs.empty()) return;
+
+  for (auto [registration, tsf]: tsfs) {
+    tsf.Release();
+  }
+  tsfs.clear();
 }
 
 Napi::Promise Activate(const Napi::CallbackInfo& info) {
@@ -172,11 +188,32 @@ Napi::Promise Activate(const Napi::CallbackInfo& info) {
   auto worker = new ActivationWorker(env, deferred);
   worker->Queue();
 
+  env.AddCleanupHook([] {
+    LOG("try to cleanup");
+
+    ClearThreadSafeFunctions();
+    
+    auto result = hotcakey::Inactivate();
+
+    if (result != hotcakey::Result::kSuccess) {
+      LOG("inactivation failed");
+    }
+
+    LOG("clean up completed");
+  });
+
   return deferred.Promise();
 }
 
 Napi::Promise Inactivate(const Napi::CallbackInfo& info) {
   LOG("start exported function `Inactivate`");
+
+  // unregister all listeners
+  for (auto [registration, tsf]: tsfs) {
+    tsf.Release();
+  }
+
+  tsfs.clear();
 
   auto env = info.Env();
   auto deferred = Napi::Promise::Deferred::New(info.Env());

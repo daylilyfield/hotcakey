@@ -23,6 +23,10 @@ struct Listener {
 };
 
 std::thread nativeThread;
+
+// why do we use `atomic<bool> instead of `bool with mutex`?
+// because this variable is read in the Carbon Event Loop,
+// we should not repeat to lock and release mutext for performance reason.
 std::atomic<bool> isActive(false);
 
 std::unordered_map<hotcakey::Registration, const Listener*> listeners;
@@ -313,7 +317,7 @@ Result Activate() {
     }
   
     cond.wait(lock, [] { return isActive.load(std::memory_order_acquire); });
-  }
+  } // lock(mutex)
 
   LOG("thread priority successfully updated");
 
@@ -323,23 +327,32 @@ Result Activate() {
 Result Inactivate() {
   LOG("deactivate hotcakey");
 
-  LOG("unregister all event listeners");
-
-  for (auto [key, value] : listeners) {
-    if (value->eventRef == nullptr) continue;
-    auto status = UnregisterEventHotKey(value->eventRef);
-
-    if (status != noErr) {
-      LOG("failed to unregister listener with id: " << value->registration << " and status: " << status);
-      continue;
-    }
-
-    delete value;
-
-    LOG("successfully unregister listener with id: " << value->registration);
+  if (!isActive.load(std::memory_order_acquire)) {
+    LOG("do nothing since already inactive");
+    return kSuccess;
   }
 
-  listeners.clear();
+  LOG("unregister all event listeners");
+
+  {
+    std::lock_guard<std::mutex> lock(mutex);
+
+    for (auto [key, value] : listeners) {
+      if (value->eventRef == nullptr) continue;
+      auto status = UnregisterEventHotKey(value->eventRef);
+  
+      if (status != noErr) {
+        LOG("failed to unregister listener with id: " << value->registration << " and status: " << status);
+        continue;
+      }
+  
+      delete value;
+  
+      LOG("successfully unregister listener with id: " << value->registration);
+    }
+  
+    listeners.clear();
+  } // lock(mutex)
 
   isActive.store(false, std::memory_order_release);
 
@@ -382,11 +395,15 @@ RegistrationResult Register(const std::vector<std::string>& keys, const std::fun
 		return { kFailure, -1 };
 	} 
 
-  listeners[id] = new Listener {
-    .registration = id,
-    .callback = listener,
-    .eventRef = eventRef,
-  };
+  {
+    std::lock_guard<std::mutex> lock(mutex);
+
+    listeners[id] = new Listener {
+      .registration = id,
+      .callback = listener,
+      .eventRef = eventRef,
+    };
+  } // lock(mutex)
 
   LOG("hotkey registered with id: " << id);
 
@@ -408,9 +425,12 @@ Result Unregister(const Registration &registration) {
 
   LOG("unregistered hotkey");
 
-  delete listener;
+  {
+    std::unique_lock<std::mutex> lock(mutex);
+    listeners.erase(registration);
+  } // lock(mutex)
 
-  listeners.erase(registration);
+  delete listener;
 
   return kSuccess;
 }
