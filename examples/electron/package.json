@@ -9,7 +9,7 @@
   "author": "daylilyfield",
   "license": "MIT",
   "dependencies": {
-    "electron": "^15.0.0",
+    "electron": "^14.0.1",
     "hotcakey": "file:../.."
   },
   "devDependencies": {

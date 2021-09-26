@@ -22,8 +22,8 @@ i need to detect global shortcut `keydown` and `keyup` events on electron platfo
 
 ## supported platform
 
-- [x] node.js 12 or higher
-- [x] electron 11 or higher
+- [x] node.js 14.14 or higher
+- [x] electron 14 or higher
 
 ## install
 

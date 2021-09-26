@@ -29,8 +29,8 @@
   "devDependencies": {
     "@types/bindings": "^1.5.1",
     "bindings": "^1.5.0",
-    "node-gyp": "^8.1.0",
     "node-addon-api": "^4.2.0",
+    "node-gyp": "^8.1.0",
     "prebuild": "^11.0.0",
     "prebuild-install": "^6.1.4",
     "ts-node": "^10.2.1",

@@ -52,6 +52,7 @@
             "xcode_settings": {
               "GCC_ENABLE_CPP_EXCEPTIONS": "YES",
               "GCC_SYMBOLS_PRIVATE_EXTERN": "YES",
+              "MACOSX_DEPLOYMENT_TARGET": "10.7",
               "CLANG_CXX_LIBRARY": "libc++",
               "CLANG_CXX_LANGUAGE_STANDARD": "c++17"
             }

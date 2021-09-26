@@ -1,6 +1,7 @@
 bin/
 build/
 node_modules/
+prebuilds/
 
 .cache/
 compile_commands.json
