@@ -1,0 +1,18 @@
+{
+  "name": "hotcakey-example-electron",
+  "version": "0.0.0",
+  "description": "hotcakey example application for electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "daylilyfield",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^15.0.0",
+    "hotcakey": "file:../.."
+  },
+  "devDependencies": {
+    "electron-rebuild": "^3.2.3"
+  }
+}
