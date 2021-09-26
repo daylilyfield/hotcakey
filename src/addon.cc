@@ -39,7 +39,7 @@ public:
       deferred.Resolve(Napi::String::New(Env(), hotcakey::ToString(result)));
       break;
     default:
-      LOG("activation finished with status: failure");
+      ERR("activation finished with status: failure");
       deferred.Reject(Napi::String::New(Env(), hotcakey::ToString(result)));
       break;
     }
@@ -77,7 +77,7 @@ public:
       deferred.Resolve(Napi::String::New(Env(), hotcakey::ToString(result)));
       break;
     default:
-      LOG("inactivation finished with status: failure");
+      ERR("inactivation finished with status: failure");
       deferred.Reject(Napi::String::New(Env(), hotcakey::ToString(result)));
       break;
     }
@@ -154,7 +154,7 @@ Napi::Value Register(const Napi::CallbackInfo& info) {
     auto status = listener.BlockingCall(value, wrapper);
 
     if (status != napi_ok) {
-      LOG("failed to invoke thread safe function");
+      ERR("failed to invoke thread safe function");
     }
   });
 
@@ -182,6 +182,15 @@ void ClearThreadSafeFunctions() {
 Napi::Promise Activate(const Napi::CallbackInfo& info) {
   LOG("start exported function `Activate`");
 
+  if (info.Length() > 0) {
+    auto config = info[0].As<Napi::Object>();
+    auto verbose = config.Get("verbose");
+
+    if (verbose.IsBoolean()) {
+      hotcakey::utils::SetVerbose(verbose.As<Napi::Boolean>().Value());
+    }
+  }
+
   auto env = info.Env();
   auto deferred = Napi::Promise::Deferred::New(info.Env());
 
@@ -196,10 +205,11 @@ Napi::Promise Activate(const Napi::CallbackInfo& info) {
     auto result = hotcakey::Inactivate();
 
     if (result != hotcakey::Result::kSuccess) {
-      LOG("inactivation failed");
+      ERR("clean up failed");
+      return;
     }
 
-    LOG("clean up completed");
+    LOG("clean up finished");
   });
 
   return deferred.Promise();
@@ -225,8 +235,6 @@ Napi::Promise Inactivate(const Napi::CallbackInfo& info) {
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
-  LOG("initialize napi export object");
-
   exports["activate"] = Napi::Function::New(env, Activate);
   exports["inactivate"] = Napi::Function::New(env, Inactivate);
   exports["register"] = Napi::Function::New(env, Register);

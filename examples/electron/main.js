@@ -7,7 +7,7 @@ let win
 function createWindow() {
   win = new BrowserWindow({
     width: 400,
-    height: 300,
+    height: 200,
     webPreferences: {
       nodeIntegration: false,
       enableRemoteModule: true,

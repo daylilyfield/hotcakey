@@ -42,14 +42,14 @@ OSStatus HandleKeyEvent(EventHandlerCallRef nextHandler, EventRef event, void* d
   auto clazz = GetEventClass(event);
 
 	if (clazz != kEventClassKeyboard) {
-    LOG("not a keyboard event: " << clazz);
+    WRN("not a keyboard event: " << clazz);
     return noErr;
   }
 
   auto kind = GetEventKind(event);
 
   if (kind != kEventHotKeyPressed && kind != kEventHotKeyReleased) {
-    LOG("not a key pressed or key released event: " << kind);
+    WRN("not a key pressed or key released event: " << kind);
     return noErr;
   }
 
@@ -275,7 +275,7 @@ Result Activate() {
       auto status = InstallKeyEventHandler();
   
       if (status != noErr) {
-        LOG("application event handler installation failed with status:" << status);
+        ERR("application event handler installation failed with status:" << status);
         return;
       }
   
@@ -313,13 +313,13 @@ Result Activate() {
     param.sched_priority = sched_get_priority_max(policy);
   
     if (pthread_setschedparam(nativeThread.native_handle(), SCHED_OTHER, &param) != 0) {
-      LOG("failed to set priority");
+      WRN("failed to set priority");
     }
   
     cond.wait(lock, [] { return isActive.load(std::memory_order_acquire); });
   } // lock(mutex)
 
-  LOG("thread priority successfully updated");
+  LOG("message loop thread successfully started");
 
   return Result::kSuccess;
 }
@@ -342,7 +342,7 @@ Result Inactivate() {
       auto status = UnregisterEventHotKey(value->eventRef);
   
       if (status != noErr) {
-        LOG("failed to unregister listener with id: " << value->registration << " and status: " << status);
+        ERR("failed to unregister listener with id: " << value->registration << " and status: " << status);
         continue;
       }
   
@@ -391,7 +391,7 @@ RegistrationResult Register(const std::vector<std::string>& keys, const std::fun
 
 	if (status != noErr) {
     // -9878 means conflict maybe
-    LOG("failed to register hotkey: " << status);
+    ERR("failed to register hotkey: " << status);
 		return { kFailure, -1 };
 	} 
 
@@ -419,7 +419,7 @@ Result Unregister(const Registration &registration) {
   auto status = UnregisterEventHotKey(listener->eventRef);
 
   if (status != noErr) {
-    LOG("failed to unregister hotkey with status: " << status);
+    ERR("failed to unregister hotkey with status: " << status);
     return kFailure;
   }
 

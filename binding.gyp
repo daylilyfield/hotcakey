@@ -6,7 +6,12 @@
       "cflags!": ["-fno-exceptions"],
       "cflags_cc!": ["-fno-exceptions"],
 
-      "sources": ["src/addon.cc", "src/hotcakey/hotcakey.mac.cc", "src/hotcakey/utils/strings.cc"],
+      "sources": [
+        "src/addon.cc",
+        "src/hotcakey/hotcakey.mac.cc",
+        "src/hotcakey/utils/strings.cc",
+        "src/hotcakey/utils/logger.cc"
+      ],
 
       "include_dirs": ["<!@(node -p \"require('node-addon-api').include\")"],
 

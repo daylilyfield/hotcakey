@@ -110,10 +110,11 @@ type Key =
   | 'command | control'
   | 'cmd | ctrl'
 
+type Option = { verbose: boolean }
 type Unsubscribe = () => void
 type Event = { type: 'keydown' | 'keyup'; time: number }
 type Listener = (event: Event) => void
 
-export function activate(): Promise<void>
+export function activate(option?: Option): Promise<void>
 export function inactivate(): Promise<void>
 export function register(keys: Key[], listener: Listener): Unsubscribe
