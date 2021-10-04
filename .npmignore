@@ -1,6 +1,9 @@
 bin/
+build/
+prebuilds/
 examples/
 .cache/
 
 .gitignore
+.prettierrc
 compile_commands.json

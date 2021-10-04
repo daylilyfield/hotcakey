@@ -1,31 +1,29 @@
-#include <cstddef>
-#include <thread>
-#include <chrono>
-#include <unordered_map>
 #include <napi.h>
 
+#include <chrono>
+#include <cstddef>
+#include <thread>
+#include <unordered_map>
+
 #include "./hotcakey/hotcakey.h"
-#include "./hotcakey/utils/strings.h"
 #include "./hotcakey/utils/logger.h"
+#include "./hotcakey/utils/strings.h"
 
 namespace {
 
 std::unordered_map<hotcakey::Registration, Napi::ThreadSafeFunction> tsfs;
 
 class ActivationWorker : public Napi::AsyncWorker {
+ public:
+  ActivationWorker(const Napi::Env& env,
+                   const Napi::Promise::Deferred& deferred)
+      : Napi::AsyncWorker(env), deferred(deferred) {}
 
-public:
-  ActivationWorker(const Napi::Env& env, const Napi::Promise::Deferred& deferred)
-  : Napi::AsyncWorker(env), deferred(deferred) {
-  }
-
-  void Execute () {
-    result = hotcakey::Activate();
-  }
+  void Execute() { result = hotcakey::Activate(); }
 
   void OnError(const Napi::Error& e) {
-     Napi::HandleScope scope(Env());
-     deferred.Reject(Napi::String::New(Env(), "failure"));
+    Napi::HandleScope scope(Env());
+    deferred.Reject(Napi::String::New(Env(), "failure"));
   }
 
   void OnOK() {
@@ -34,36 +32,33 @@ public:
     LOG("activation callback called");
 
     switch (result) {
-    case hotcakey::Result::kSuccess:
-      LOG("activation finished with status: success");
-      deferred.Resolve(Napi::String::New(Env(), hotcakey::ToString(result)));
-      break;
-    default:
-      ERR("activation finished with status: failure");
-      deferred.Reject(Napi::String::New(Env(), hotcakey::ToString(result)));
-      break;
+      case hotcakey::Result::kSuccess:
+        LOG("activation finished with status: success");
+        deferred.Resolve(Napi::String::New(Env(), hotcakey::ToString(result)));
+        break;
+      default:
+        ERR("activation finished with status: failure");
+        deferred.Reject(Napi::String::New(Env(), hotcakey::ToString(result)));
+        break;
     }
   }
-    
-private:
+
+ private:
   Napi::Promise::Deferred deferred;
   hotcakey::Result result;
 };
 
 class InactivationWorker : public Napi::AsyncWorker {
+ public:
+  InactivationWorker(const Napi::Env& env,
+                     const Napi::Promise::Deferred& deferred)
+      : Napi::AsyncWorker(env), deferred(deferred) {}
 
-public:
-  InactivationWorker(const Napi::Env& env, const Napi::Promise::Deferred& deferred)
-  : Napi::AsyncWorker(env), deferred(deferred) {
-  }
-
-  void Execute () {
-    result = hotcakey::Inactivate();
-  }
+  void Execute() { result = hotcakey::Inactivate(); }
 
   void OnError(const Napi::Error& e) {
-     Napi::HandleScope scope(Env());
-     deferred.Reject(Napi::String::New(Env(), "failure"));
+    Napi::HandleScope scope(Env());
+    deferred.Reject(Napi::String::New(Env(), "failure"));
   }
 
   void OnOK() {
@@ -72,18 +67,18 @@ public:
     LOG("inactivation callback called");
 
     switch (result) {
-    case hotcakey::Result::kSuccess:
-      LOG("inactivation finished with status: success");
-      deferred.Resolve(Napi::String::New(Env(), hotcakey::ToString(result)));
-      break;
-    default:
-      ERR("inactivation finished with status: failure");
-      deferred.Reject(Napi::String::New(Env(), hotcakey::ToString(result)));
-      break;
+      case hotcakey::Result::kSuccess:
+        LOG("inactivation finished with status: success");
+        deferred.Resolve(Napi::String::New(Env(), hotcakey::ToString(result)));
+        break;
+      default:
+        ERR("inactivation finished with status: failure");
+        deferred.Reject(Napi::String::New(Env(), hotcakey::ToString(result)));
+        break;
     }
   }
 
-private:
+ private:
   Napi::Promise::Deferred deferred;
   hotcakey::Result result;
 };
@@ -112,7 +107,8 @@ void Unregister(const Napi::CallbackInfo& info) {
     auto result = hotcakey::Unregister(*registration);
 
     if (result != hotcakey::Result::kSuccess) {
-      Napi::TypeError::New(info.Env(), "cannot unregister listener").ThrowAsJavaScriptException();
+      Napi::TypeError::New(info.Env(), "cannot unregister listener")
+          .ThrowAsJavaScriptException();
       return;
     }
 
@@ -133,30 +129,35 @@ Napi::Value Register(const Napi::CallbackInfo& info) {
   auto keys = info[0].As<Napi::Array>();
   auto callback = info[1].As<Napi::Function>();
 
-  auto listener = Napi::ThreadSafeFunction::New(env, callback, "HotCakey Listener", 0, 1);
+  auto listener =
+      Napi::ThreadSafeFunction::New(env, callback, "HotCakey Listener", 0, 1);
 
-  auto [result, registration] = hotcakey::Register(NormalizeKeys(keys), [listener](const hotcakey::Event& event){
-    auto wrapper = [](Napi::Env env, Napi::Function jsCallback, hotcakey::Event* value) {
-      LOG("call wrapper from thread safe function");
+  auto [result, registration] = hotcakey::Register(
+      NormalizeKeys(keys), [listener](const hotcakey::Event& event) {
+        auto wrapper = [](Napi::Env env, Napi::Function jsCallback,
+                          hotcakey::Event* value) {
+          LOG("call wrapper from thread safe function");
 
-      auto event = Napi::Object::New(env);
-      event["type"] = Napi::String::New(env, hotcakey::ToString(value->type));
-      event["time"] = Napi::Number::New(env, value->time);
+          auto event = Napi::Object::New(env);
+          event["type"] =
+              Napi::String::New(env, hotcakey::ToString(value->type));
+          event["time"] = Napi::Number::New(env, value->time);
 
-      jsCallback.Call( { event } );
+          jsCallback.Call({event});
 
-      delete value;
-    };
+          delete value;
+        };
 
-    LOG("callback " << hotcakey::ToString(event.type) << " at " << event.time);
+        LOG("callback " << hotcakey::ToString(event.type) << " at "
+                        << event.time);
 
-    auto value = new hotcakey::Event(event.type, event.time);
-    auto status = listener.BlockingCall(value, wrapper);
+        auto value = new hotcakey::Event(event.type, event.time);
+        auto status = listener.BlockingCall(value, wrapper);
 
-    if (status != napi_ok) {
-      ERR("failed to invoke thread safe function");
-    }
-  });
+        if (status != napi_ok) {
+          ERR("failed to invoke thread safe function");
+        }
+      });
 
   if (result != hotcakey::Result::kSuccess) {
     // otherwise you cannot shutdown node.js main loop
@@ -173,7 +174,7 @@ Napi::Value Register(const Napi::CallbackInfo& info) {
 void ClearThreadSafeFunctions() {
   if (tsfs.empty()) return;
 
-  for (auto [registration, tsf]: tsfs) {
+  for (auto [registration, tsf] : tsfs) {
     tsf.Release();
   }
   tsfs.clear();
@@ -201,7 +202,7 @@ Napi::Promise Activate(const Napi::CallbackInfo& info) {
     LOG("try to cleanup");
 
     ClearThreadSafeFunctions();
-    
+
     auto result = hotcakey::Inactivate();
 
     if (result != hotcakey::Result::kSuccess) {
@@ -219,7 +220,7 @@ Napi::Promise Inactivate(const Napi::CallbackInfo& info) {
   LOG("start exported function `Inactivate`");
 
   // unregister all listeners
-  for (auto [registration, tsf]: tsfs) {
+  for (auto [registration, tsf] : tsfs) {
     tsf.Release();
   }
 
@@ -244,4 +245,4 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 
 NODE_API_MODULE(hotcakey, Init);
 
-} // namespace
+}  // namespace

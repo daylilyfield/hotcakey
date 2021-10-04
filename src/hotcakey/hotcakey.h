@@ -1,9 +1,9 @@
 #ifndef HOTCAKEY_H_
 #define HOTCAKEY_H_
 
-#include <vector>
-#include <string>
 #include <ctime>
+#include <string>
+#include <vector>
 
 namespace hotcakey {
 
@@ -14,8 +14,10 @@ Result Inactivate();
 
 inline std::string ToString(Result result) {
   switch (result) {
-    case kSuccess: return "success";
-    case kFailure: return "failure";
+    case kSuccess:
+      return "success";
+    case kFailure:
+      return "failure";
   }
 }
 
@@ -27,19 +29,22 @@ using RegistrationResult = std::pair<Result, Registration>;
 struct Event {
   EventType type;
   std::time_t time;
-  Event(EventType type, std::time_t time): type(type), time(time) {};
+  Event(EventType type, std::time_t time) : type(type), time(time){};
 };
 
-RegistrationResult Register(const std::vector<std::string>& keys, const std::function<void(Event)>& listener);
+RegistrationResult Register(const std::vector<std::string>& keys,
+                            const std::function<void(Event)>& listener);
 Result Unregister(const Registration& registration);
 
 inline std::string ToString(EventType type) {
   switch (type) {
-    case kKeyDown: return "keydown";
-    case kKeyUp: return "keyup";
+    case kKeyDown:
+      return "keydown";
+    case kKeyUp:
+      return "keyup";
   }
 }
 
-} // namespace hotcakey
+}  // namespace hotcakey
 
-#endif // HOTCAKEY_H_
+#endif  // HOTCAKEY_H_

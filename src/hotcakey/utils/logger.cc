@@ -1,11 +1,12 @@
 #include "./logger.h"
+
 #include <atomic>
 
 namespace {
 
 std::atomic<bool> isVerbose(false);
 
-} // namespace
+}  // namespace
 
 namespace hotcakey {
 namespace utils {
@@ -20,13 +21,9 @@ void Log(const std::string& msg) {
   }
 }
 
-void Wrn(const std::string& msg) {
-  std::cerr << msg << std::endl;
-}
+void Wrn(const std::string& msg) { std::cerr << msg << std::endl; }
 
-void Err(const std::string& msg) {
-  std::cerr << msg << std::endl;
-}
+void Err(const std::string& msg) { std::cerr << msg << std::endl; }
 
-} // utils
-} // namespace hotcakey
+}  // namespace utils
+}  // namespace hotcakey
