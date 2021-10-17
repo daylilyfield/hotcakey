@@ -131,7 +131,9 @@ type Key =
 
 type Option = { verbose: boolean }
 type Unsubscribe = () => void
-type Event = { type: 'keydown' | 'keyup'; time: number }
+type HotKeyEvent = { type: 'keydown' | 'keyup', time:number }
+type ErrorEvent = { type: 'error', code: string, time: number}
+type Event = HotKeyEvent | ErrorEvent
 type Listener = (event: Event) => void
 
 export function activate(option?: Option): Promise<void>
