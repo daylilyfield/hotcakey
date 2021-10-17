@@ -1,7 +1,7 @@
 {
   "name": "hotcakey",
-  "version": "0.1.0",
-  "description": "the global shortcut (aka hotkey) module for node.js and electron",
+  "version": "0.5.0",
+  "description": "the cross-platform global shortcut (aka hotkey) module for node.js and electron",
   "homepage": "https://github.com/daylilyfield/hotcakey",
   "bugs": "https://github.com/daylilyfield/hotcakey/issues",
   "main": "lib/index.js",
@@ -20,7 +20,11 @@
   "keywords": [
     "hotkey",
     "shortcut",
-    "electron"
+    "electron",
+    "keyhook",
+    "keyboard",
+    "keydown",
+    "keyup"
   ],
   "author": "daylilyfield",
   "license": "MIT",

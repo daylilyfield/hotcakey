@@ -12,18 +12,7 @@ i need to detect global shortcut `keydown` and `keyup` events on electron platfo
 
 - detecting key combination globally even if your application does not have a focus.
 - working with node.js and electron.
-- working on macOS, windows, and linux. (wip)
-
-## supported os
-
-- [x] macOS 10.7 or higher
-- [ ] windows 10 or higher
-- [ ] linux
-
-## supported platform
-
-- [x] node.js 14.14 or higher
-- [x] electron 14 or higher
+- working on macOS, windows. (and linux for near future)
 
 ## install
 
@@ -48,3 +37,18 @@ async function main() {
 
 main()
 ```
+
+## examples
+
+please check out the './examples' directory. you can find these for node.js and electron there.
+
+## supported os
+
+- [x] macOS 10.7 or higher
+- [x] windows 10 or higher
+- [ ] linux
+
+## supported platform
+
+- [x] node.js 14.14 or higher
+- [x] electron 14 or higher

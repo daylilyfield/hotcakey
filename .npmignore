@@ -3,7 +3,7 @@ build/
 prebuilds/
 examples/
 .cache/
-
+.vscode
 .gitignore
 .prettierrc
 compile_commands.json
