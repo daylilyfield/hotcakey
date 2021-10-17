@@ -4,4 +4,5 @@ node_modules/
 prebuilds/
 
 .cache/
+.vscode/
 compile_commands.json

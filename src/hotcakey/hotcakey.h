@@ -2,6 +2,7 @@
 #define HOTCAKEY_H_
 
 #include <ctime>
+#include <functional>
 #include <string>
 #include <vector>
 

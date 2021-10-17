@@ -1,5 +1,7 @@
 #include "./strings.h"
 
+#include <algorithm>
+
 namespace hotcakey {
 namespace utils {
 

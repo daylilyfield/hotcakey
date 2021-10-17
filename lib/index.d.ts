@@ -83,9 +83,15 @@ type Key =
   | 'f18'
   | 'f19'
   | 'f20'
+  | 'f21'
+  | 'f22'
+  | 'f23'
+  | 'f24'
   | 'space'
   | 'tab'
   | 'capslock'
+  | 'numlock'
+  | 'scrolllock'
   | 'delete'
   | 'backspace'
   | 'enter'
@@ -100,6 +106,7 @@ type Key =
   | 'pagedown'
   | 'escape'
   | 'esc'
+  | 'print'
   | 'volumeup'
   | 'volumeedown'
   | 'volumemute'
@@ -131,7 +138,9 @@ type Key =
 
 type Option = { verbose: boolean }
 type Unsubscribe = () => void
-type Event = { type: 'keydown' | 'keyup'; time: number }
+type HotKeyEvent = { type: 'keydown' | 'keyup', time:number }
+type ErrorEvent = { type: 'error', code: string, time: number}
+type Event = HotKeyEvent | ErrorEvent
 type Listener = (event: Event) => void
 
 export function activate(option?: Option): Promise<void>

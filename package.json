@@ -9,9 +9,12 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "cc": "bear -- npm run build",
-    "build": "node-gyp configure --debug && node-gyp build --debug",
+    "build": "node-gyp configure && node-gyp build",
+    "build:debug": "node-gyp configure --debug && node-gyp build --debug",
     "test": "ts-node ./test/index.ts",
+    "dev": "run-s build test",
     "examples:node": "ts-node examples/node/node.ts",
+    "examples:electron": "npm --prefix examples/electron install && npm --prefix examples/electron start ",
     "install": "prebuild-install || node-gyp rebuild"
   },
   "keywords": [
@@ -31,6 +34,7 @@
     "bindings": "^1.5.0",
     "node-addon-api": "^4.2.0",
     "node-gyp": "^8.1.0",
+    "npm-run-all": "^4.1.5",
     "prebuild": "^11.0.0",
     "prebuild-install": "^6.1.4",
     "ts-node": "^10.2.1",

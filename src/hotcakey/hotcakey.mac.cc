@@ -541,14 +541,14 @@ Result Unregister(const Registration& registration) {
     return kFailure;
   }
 
-  LOG("unregistered hotkey");
-
   {
     std::unique_lock<std::mutex> lock(mutex);
     listeners.erase(registration);
   }  // lock(mutex)
 
   delete listener;
+
+  LOG("hotkey unregistered");
 
   return kSuccess;
 }
