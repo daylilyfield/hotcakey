@@ -1,11 +1,11 @@
 import hotcakey from '../'
 
 async function main() {
-  console.log('--- activate hotcakey... ---')
+  console.log('🥞 activate hotcakey...')
 
   await hotcakey.activate({ verbose: false })
 
-  console.log('--- hotcakey baked ---')
+  console.log('🥞 hotcakey baked!')
 
   let keydown = false
   let keyup = false
@@ -13,11 +13,11 @@ async function main() {
   let unsubscribe = hotcakey.register(['control', 'shift', '/'], (event) => {
     if (event.type === 'keydown') {
       keydown = true
-      console.log('--- keydown detected')
+      console.log('⭕️ keydown detected')
     }
     if (event.type === 'keyup') {
       keyup = true
-      console.log('--- keyup detected')
+      console.log('⭕️ keyup detected')
     }
   })
 
@@ -25,14 +25,14 @@ async function main() {
   // hotcakey can detec keydown and keyup events
   //
 
-  console.log('--- please press and release "CTRL + SHIFT + /" in 5 seconds ---')
+  console.log('⌨️  please press and release "CTRL + SHIFT + /" in 5 seconds')
 
   await sleep(5)
 
-  assert(keydown, 'keydown event missed')
-  assert(keyup, 'keyup event missed')
+  assert(keydown, '❌ keydown event missed')
+  assert(keyup, '❌ keyup event missed')
 
-  console.log('--- congrats! both keydown and keyup events detected ---')
+  console.log('🎉 congrats! both keydown and keyup events detected')
 
   //
   // hotcakey can NOT detec keydown and keyup events
@@ -43,25 +43,25 @@ async function main() {
 
   unsubscribe()
 
-  console.log('--- please press and release "CTRL + SHIFT + /" in 5 seconds ---')
+  console.log('⌨️  please press and release "CTRL + SHIFT + /" in 5 seconds')
 
   await sleep(5)
 
-  assert(!keydown, 'keydown event detected')
-  assert(!keyup, 'keyup event detected')
+  assert(!keydown, '❌ keydown event detected')
+  assert(!keyup, '❌ keyup event detected')
 
-  console.log('--- congrats! neither keydown nor keyup events detected ---')
+  console.log('🎉 congrats! neither keydown nor keyup events detected ---')
 
-  console.log('--- inactivate hotcakey... ---')
+  console.log('🥞 inactivate hotcakey... ---')
 
   hotcakey.inactivate()
 
-  console.log('--- hotcakey inactivated ---')
+  console.log('🥞 hotcakey inactivated ---')
 }
 
 function assert(condition: boolean, message: string) {
   if (!condition) {
-     throw new Error('Assertion Failed: ' + message)
+    throw new Error('Assertion Failed: ' + message)
   }
 }
 
@@ -71,4 +71,7 @@ function sleep(seconds: number): Promise<void> {
   })
 }
 
-main()
+main().catch((err) => {
+  console.error(err)
+  hotcakey.inactivate()
+})
