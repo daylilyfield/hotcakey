@@ -1,6 +1,6 @@
 {
   "name": "hotcakey",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "the cross-platform global shortcut (aka hotkey) module for node.js and electron",
   "homepage": "https://github.com/daylilyfield/hotcakey",
   "bugs": "https://github.com/daylilyfield/hotcakey/issues",
