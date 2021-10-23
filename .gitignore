@@ -1,7 +1,10 @@
+.DS_Store
+
 bin/
 build/
 node_modules/
 prebuilds/
+lib/*
 
 .cache/
 .vscode/

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,    
+    "strict": true,
+    "target": "ES2017",
+    "module": "CommonJS",
+    "outDir": "./lib",
+    "sourceMap": true,
+    "skipLibCheck": true                        
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules/*"]
+}

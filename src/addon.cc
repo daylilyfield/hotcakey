@@ -89,7 +89,7 @@ std::vector<std::string> NormalizeKeys(const Napi::Array& keys) {
   for (uint32_t i = 0; i < keys.Length(); i++) {
     Napi::Value value = keys[i];
     auto key = value.As<Napi::String>().Utf8Value();
-    results.push_back(hotcakey::utils::ToLower(key));
+    results.push_back(key);
   }
 
   LOG("normalized key strings: " << hotcakey::utils::Join(results, ", "));
