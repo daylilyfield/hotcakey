@@ -10,7 +10,7 @@ async function main() {
   let keydown = false
   let keyup = false
 
-  let unsubscribe = hotcakey.register(['control', 'shift', '/'], (event) => {
+  let unsubscribe = hotcakey.register(['Control', 'Shift', 'Slash'], (event) => {
     if (event.type === 'keydown') {
       keydown = true
       console.log('⭕️ keydown detected')
@@ -50,13 +50,13 @@ async function main() {
   assert(!keydown, '❌ keydown event detected')
   assert(!keyup, '❌ keyup event detected')
 
-  console.log('🎉 congrats! neither keydown nor keyup events detected ---')
+  console.log('🎉 congrats! neither keydown nor keyup events detected')
 
-  console.log('🥞 inactivate hotcakey... ---')
+  console.log('🥞 inactivate hotcakey...')
 
-  hotcakey.inactivate()
+  await hotcakey.inactivate()
 
-  console.log('🥞 hotcakey inactivated ---')
+  console.log('🥞 hotcakey inactivated')
 }
 
 function assert(condition: boolean, message: string) {

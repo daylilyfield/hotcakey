@@ -22,7 +22,7 @@ function createWindow() {
 app.on('ready', async () => {
   await hotcakey.activate()
 
-  hotcakey.register(['shift', 'space'], (event) => {
+  hotcakey.register(['Shift', 'Space'], (event) => {
     console.log('%s event at %d', event.type, event.time)
     win.webContents.send(event.type)
   })

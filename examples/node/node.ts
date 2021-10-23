@@ -1,13 +1,13 @@
 import hotcakey from '../../'
 
 async function main() {
-  await hotcakey.activate()
+  await hotcakey.activate({ verbose: true })
 
   console.log('🥞 hotcakey baked 🥞')
   console.log('⌨️i press "Shift + Space" to enjoy hotcakey')
   console.log('⏰ exit automatically in 5 seconds')
 
-  hotcakey.register(['shift', 'space'], (event) => {
+  hotcakey.register(['Shift', 'Space'], (event) => {
     console.log('%s event detected at %d', event.type, event.time)
   })
 

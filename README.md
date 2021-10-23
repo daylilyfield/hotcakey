@@ -11,6 +11,7 @@ i need to detect global shortcut `keydown` and `keyup` events on electron platfo
 ## feature
 
 - detecting key combination globally even if your application does not have a focus.
+- using [web-standard physical keycodes](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code/code_values)
 - working with node.js and electron.
 - working on macOS, windows. (and linux for near future)
 
@@ -30,7 +31,7 @@ import hotcakey from 'hotcakey'
 async function main() {
   await hotcakey.activate()
 
-  hotcakey.register(['shift', 'space'], (event) => {
+  hotcakey.register(['Shift', 'Space'], (event) => {
     console.log('%s event at %d', event.type, event.time)
   })
 }
@@ -40,7 +41,11 @@ main()
 
 ## examples
 
-please check out the './examples' directory. you can find these for node.js and electron there.
+please check out the `./examples` directory. you can find some examples for node.js and electron there.
+
+## available physical keycodes
+
+hotcakey uses physical keycodes defiend in web standard. see type definitions [here](./src/index.ts) for detail.
 
 ## supported os
 

@@ -39,8 +39,6 @@ std::condition_variable cond;
 
 hotcakey::Registration eventHotKeyIdSequence = 0;
 
-CFMutableDictionaryRef charToCodeDict = NULL;
-
 OSStatus HandleKeyEvent(EventHandlerCallRef nextHandler, EventRef event,
                         void* data) {
   LOG("try to handle key event");
@@ -101,236 +99,344 @@ constexpr unsigned long long int Hash(const char* str,
 UInt32 MapCarbonVirtualKey(const std::string& key) {
   switch (Hash(key.c_str())) {
     // modifiers key to ignore
-    case Hash("shift"):
-      return UINT32_MAX;
-    case Hash("option"):
-      return UINT32_MAX;
-    case Hash("alt"):
-      return UINT32_MAX;
-    case Hash("alt | option"):
-      return UINT32_MAX;
-    case Hash("control"):
-      return UINT32_MAX;
-    case Hash("ctrl"):
-      return UINT32_MAX;
-    case Hash("command"):
-      return UINT32_MAX;
-    case Hash("cmd"):
-      return UINT32_MAX;
-    case Hash("command | control"):
-      return UINT32_MAX;
-    case Hash("cmd | ctrl"):
+    case Hash("Control"):
+    case Hash("ControlRight"):
+    case Hash("ControlLeft"):
+    case Hash("Shift"):
+    case Hash("ShiftRight"):
+    case Hash("ShiftLeft"):
+    case Hash("Alt"):
+    case Hash("AltRight"):
+    case Hash("AltLeft"):
+    case Hash("Meta"):
+    case Hash("MetaRight"):
+    case Hash("MetaLeft"):
       return UINT32_MAX;
 
-    // 1 : 1 paired on any keyboard
-    case Hash("f1"):
-      return kVK_F1;
-    case Hash("f2"):
-      return kVK_F2;
-    case Hash("f3"):
-      return kVK_F3;
-    case Hash("f4"):
-      return kVK_F4;
-    case Hash("f5"):
-      return kVK_F5;
-    case Hash("f6"):
-      return kVK_F6;
-    case Hash("f7"):
-      return kVK_F7;
-    case Hash("f8"):
-      return kVK_F8;
-    case Hash("f9"):
-      return kVK_F9;
-    case Hash("f10"):
-      return kVK_F10;
-    case Hash("f11"):
-      return kVK_F11;
-    case Hash("f12"):
-      return kVK_F12;
-    case Hash("f13"):
-      return kVK_F13;
-    case Hash("f14"):
-      return kVK_F14;
-    case Hash("f15"):
-      return kVK_F15;
-    case Hash("f16"):
-      return kVK_F16;
-    case Hash("f17"):
-      return kVK_F17;
-    case Hash("f18"):
-      return kVK_F18;
-    case Hash("f19"):
-      return kVK_F19;
-    case Hash("f20"):
-      return kVK_F20;
-    case Hash("space"):
-      return kVK_Space;
-    case Hash("tab"):
-      return kVK_Tab;
-    case Hash("capslock"):
-      return kVK_CapsLock;
-    case Hash("delete"):
-      return kVK_ForwardDelete;
-    case Hash("backspace"):
+    case Hash("KeyA"):
+      return kVK_ANSI_A;
+    case Hash("KeyB"):
+      return kVK_ANSI_B;
+    case Hash("KeyC"):
+      return kVK_ANSI_C;
+    case Hash("KeyD"):
+      return kVK_ANSI_D;
+    case Hash("KeyE"):
+      return kVK_ANSI_E;
+    case Hash("KeyF"):
+      return kVK_ANSI_F;
+    case Hash("KeyG"):
+      return kVK_ANSI_G;
+    case Hash("KeyH"):
+      return kVK_ANSI_H;
+    case Hash("KeyI"):
+      return kVK_ANSI_I;
+    case Hash("KeyJ"):
+      return kVK_ANSI_J;
+    case Hash("KeyK"):
+      return kVK_ANSI_K;
+    case Hash("KeyL"):
+      return kVK_ANSI_L;
+    case Hash("KeyM"):
+      return kVK_ANSI_M;
+    case Hash("KeyN"):
+      return kVK_ANSI_N;
+    case Hash("KeyO"):
+      return kVK_ANSI_O;
+    case Hash("KeyP"):
+      return kVK_ANSI_P;
+    case Hash("KeyQ"):
+      return kVK_ANSI_Q;
+    case Hash("KeyR"):
+      return kVK_ANSI_R;
+    case Hash("KeyS"):
+      return kVK_ANSI_S;
+    case Hash("KeyT"):
+      return kVK_ANSI_T;
+    case Hash("KeyU"):
+      return kVK_ANSI_U;
+    case Hash("KeyV"):
+      return kVK_ANSI_V;
+    case Hash("KeyW"):
+      return kVK_ANSI_W;
+    case Hash("KeyX"):
+      return kVK_ANSI_X;
+    case Hash("KeyY"):
+      return kVK_ANSI_Y;
+    case Hash("KeyZ"):
+      return kVK_ANSI_Z;
+    case Hash("Digit1"):
+      return kVK_ANSI_1;
+    case Hash("Digit2"):
+      return kVK_ANSI_2;
+    case Hash("Digit3"):
+      return kVK_ANSI_3;
+    case Hash("Digit4"):
+      return kVK_ANSI_4;
+    case Hash("Digit5"):
+      return kVK_ANSI_5;
+    case Hash("Digit6"):
+      return kVK_ANSI_6;
+    case Hash("Digit7"):
+      return kVK_ANSI_7;
+    case Hash("Digit8"):
+      return kVK_ANSI_8;
+    case Hash("Digit9"):
+      return kVK_ANSI_9;
+    case Hash("Digit0"):
+      return kVK_ANSI_0;
+    case Hash("Minus"):
+      return kVK_ANSI_Minus;
+    case Hash("Equal"):
+      return kVK_ANSI_Equal;
+    case Hash("BracketLeft"):
+      return kVK_ANSI_LeftBracket;
+    case Hash("BracketRight"):
+      return kVK_ANSI_RightBracket;
+    case Hash("Backslash"):
+      return kVK_ANSI_Backslash;
+    case Hash("Semicolon"):
+      return kVK_ANSI_Semicolon;
+    case Hash("Quote"):
+      return kVK_ANSI_Quote;
+    case Hash("Backquote"):
+      return kVK_ANSI_Grave;
+    case Hash("Comma"):
+      return kVK_ANSI_Comma;
+    case Hash("Period"):
+      return kVK_ANSI_Period;
+    case Hash("Slash"):
+      return kVK_ANSI_Slash;
+    case Hash("Enter"):
+      return kVK_Return;
+    case Hash("Escape"):
+      return kVK_Escape;
+    case Hash("Backspace"):
       return kVK_Delete;
-    case Hash("enter"):
-      return kVK_Return;
-    case Hash("return"):
-      return kVK_Return;
-    case Hash("arrowup"):
-      return kVK_UpArrow;
-    case Hash("arrowdown"):
-      return kVK_DownArrow;
-    case Hash("arrowleft"):
-      return kVK_LeftArrow;
-    case Hash("arrowright"):
-      return kVK_RightArrow;
-    case Hash("home"):
-      return kVK_Home;
-    case Hash("end"):
-      return kVK_End;
-    case Hash("pageup"):
-      return kVK_PageUp;
-    case Hash("pagedown"):
-      return kVK_PageDown;
-    case Hash("escape"):
-      return kVK_Escape;
-    case Hash("esc"):
-      return kVK_Escape;
-    case Hash("volumeup"):
-      return kVK_VolumeUp;
-    case Hash("volumeedown"):
-      return kVK_VolumeDown;
-    case Hash("volumemute"):
-      return kVK_Mute;
-    // TODO MediaNextTrack, MediaPreviousTrack, MediaStop and MediaPlayPause
-    // TODO PrintScreen
-    case Hash("num0"):
-      return kVK_ANSI_Keypad0;
-    case Hash("num1"):
-      return kVK_ANSI_Keypad1;
-    case Hash("num2"):
-      return kVK_ANSI_Keypad2;
-    case Hash("num3"):
-      return kVK_ANSI_Keypad3;
-    case Hash("num4"):
-      return kVK_ANSI_Keypad4;
-    case Hash("num5"):
-      return kVK_ANSI_Keypad5;
-    case Hash("num6"):
-      return kVK_ANSI_Keypad6;
-    case Hash("num7"):
-      return kVK_ANSI_Keypad7;
-    case Hash("num8"):
-      return kVK_ANSI_Keypad8;
-    case Hash("num9"):
-      return kVK_ANSI_Keypad9;
-    case Hash("numadd"):
-      return kVK_ANSI_KeypadPlus;
-    case Hash("numsub"):
-      return kVK_ANSI_KeypadMinus;
-    case Hash("nummult"):
-      return kVK_ANSI_KeypadMultiply;
-    case Hash("numdiv"):
-      return kVK_ANSI_KeypadDivide;
-    case Hash("numdec"):
-      return kVK_ANSI_KeypadDecimal;
-  }
-
-  // try to respect keyboard layout
-
-  LOG("try to respect keyboard layout");
-
-  // generate keycodes table (ref: https://stackoverflow.com/a/1971027)
-  if (charToCodeDict == NULL) {
-    size_t vk;
-    charToCodeDict = CFDictionaryCreateMutable(
-        kCFAllocatorDefault, 128, &kCFCopyStringDictionaryKeyCallBacks, NULL);
-
-    if (charToCodeDict == NULL) {
+    case Hash("Tab"):
+      return kVK_Tab;
+    case Hash("Space"):
+      return kVK_Space;
+    case Hash("CapsLock"):
+      return kVK_CapsLock;
+    case Hash("F1"):
+      return kVK_F1;
+    case Hash("F2"):
+      return kVK_F2;
+    case Hash("F3"):
+      return kVK_F3;
+    case Hash("F4"):
+      return kVK_F4;
+    case Hash("F5"):
+      return kVK_F5;
+    case Hash("F6"):
+      return kVK_F6;
+    case Hash("F7"):
+      return kVK_F7;
+    case Hash("F8"):
+      return kVK_F8;
+    case Hash("F9"):
+      return kVK_F9;
+    case Hash("F10"):
+      return kVK_F10;
+    case Hash("F11"):
+      return kVK_F11;
+    case Hash("F12"):
+      return kVK_F12;
+    case Hash("F13"):
+      return kVK_F13;
+    case Hash("F14"):
+      return kVK_F14;
+    case Hash("F15"):
+      return kVK_F15;
+    case Hash("F16"):
+      return kVK_F16;
+    case Hash("F17"):
+      return kVK_F17;
+    case Hash("F18"):
+      return kVK_F18;
+    case Hash("F19"):
+      return kVK_F19;
+    case Hash("F20"):
+      return kVK_F20;
+    case Hash("F21"):
       return UINT32_MAX;
-    }
-
-    TISInputSourceRef source = TISCopyCurrentKeyboardInputSource();
-    CFDataRef uchr = static_cast<CFDataRef>(
-        TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData));
-
-    if (uchr == NULL) {
-      // for japanese keyboard fallback
-      source = TISCopyCurrentKeyboardLayoutInputSource();
-      uchr = static_cast<CFDataRef>((
-          TISGetInputSourceProperty(source, kTISPropertyUnicodeKeyLayoutData)));
-
-      if (uchr == NULL) {
-        LOG("cannnot detect layout data");
-        return UINT32_MAX;
-      }
-    }
-
-    CFRelease(source);
-
-    const UCKeyboardLayout* layout =
-        reinterpret_cast<const UCKeyboardLayout*>(CFDataGetBytePtr(uchr));
-
-    for (vk = 0; vk < 128; ++vk) {
-      UInt32 keysDown = 0;
-      UniChar chars[4];
-      UniCharCount realLength;
-
-      UCKeyTranslate(layout, vk, kUCKeyActionDisplay, 0, LMGetKbdType(),
-                     kUCKeyTranslateNoDeadKeysBit, &keysDown,
-                     sizeof(chars) / sizeof(chars[0]), &realLength, chars);
-
-      auto string = CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
-
-      if (string != NULL) {
-        CFDictionaryAddValue(charToCodeDict, string, (const void*)vk);
-        CFRelease(string);
-      }
-    }
-    LOG("keyboard layout table generated");
+    case Hash("F22"):
+      return UINT32_MAX;
+    case Hash("F23"):
+      return UINT32_MAX;
+    case Hash("F24"):
+      return UINT32_MAX;
+    case Hash("PrintScreen"):
+      return UINT32_MAX;
+    case Hash("ScrollLock"):
+      return UINT32_MAX;
+    case Hash("Pause"):
+      return UINT32_MAX;
+    case Hash("Insert"):
+      return kVK_Help;
+    case Hash("Home"):
+      return kVK_Home;
+    case Hash("PageUp"):
+      return kVK_PageUp;
+    case Hash("PageDown"):
+      return kVK_PageDown;
+    case Hash("Delete"):
+      return kVK_ForwardDelete;
+    case Hash("End"):
+      return kVK_End;
+    case Hash("ArrowUp"):
+      return kVK_UpArrow;
+    case Hash("ArrowDown"):
+      return kVK_DownArrow;
+    case Hash("ArrowRight"):
+      return kVK_RightArrow;
+    case Hash("ArrowLeft"):
+      return kVK_LeftArrow;
+    case Hash("NumLock"):
+      return kVK_ANSI_KeypadClear;
+    case Hash("NumpadDivide"):
+      return kVK_ANSI_KeypadDivide;
+    case Hash("NumpadMultiply"):
+      return kVK_ANSI_KeypadMultiply;
+    case Hash("NumpadSubtract"):
+      return kVK_ANSI_KeypadMinus;
+    case Hash("NumpadAdd"):
+      return kVK_ANSI_KeypadPlus;
+    case Hash("NumpadEnter"):
+      return kVK_ANSI_KeypadEnter;
+    case Hash("Numpad1"):
+      return kVK_ANSI_Keypad1;
+    case Hash("Numpad2"):
+      return kVK_ANSI_Keypad2;
+    case Hash("Numpad3"):
+      return kVK_ANSI_Keypad3;
+    case Hash("Numpad4"):
+      return kVK_ANSI_Keypad4;
+    case Hash("Numpad5"):
+      return kVK_ANSI_Keypad5;
+    case Hash("Numpad6"):
+      return kVK_ANSI_Keypad6;
+    case Hash("Numpad7"):
+      return kVK_ANSI_Keypad7;
+    case Hash("Numpad8"):
+      return kVK_ANSI_Keypad8;
+    case Hash("Numpad9"):
+      return kVK_ANSI_Keypad9;
+    case Hash("Numpad0"):
+      return kVK_ANSI_Keypad0;
+    case Hash("NumpadDecimal"):
+      return kVK_ANSI_KeypadDecimal;
+    case Hash("IntlBackslash"):
+      return kVK_ISO_Section;
+    case Hash("ContextMenu"):
+      return UINT32_MAX;
+    case Hash("NumpadEqual"):
+      return kVK_ANSI_KeypadEquals;
+    case Hash("Power"):
+      return UINT32_MAX;
+    case Hash("Help"):
+      return kVK_Help;
+    case Hash("Undo"):
+      return UINT32_MAX;
+    case Hash("Cut"):
+      return UINT32_MAX;
+    case Hash("Copy"):
+      return UINT32_MAX;
+    case Hash("Paste"):
+      return UINT32_MAX;
+    case Hash("AudioVolumeMute"):
+      return kVK_Mute;
+    case Hash("AudioVolumeUp"):
+      return kVK_VolumeUp;
+    case Hash("AudioVolumeDown"):
+      return kVK_VolumeDown;
+    case Hash("NumpadComma"):
+      return kVK_JIS_KeypadComma;
+    case Hash("IntlRo"):
+      return kVK_JIS_Underscore;
+    case Hash("KanaMode"):
+      return kVK_JIS_Kana;
+    case Hash("IntlYen"):
+      return kVK_JIS_Yen;
+    case Hash("Convert"):
+      return UINT32_MAX;
+    case Hash("NonConvert"):
+      return UINT32_MAX;
+    case Hash("Lang1"):
+      return kVK_JIS_Kana;
+    case Hash("Lang2"):
+      return kVK_JIS_Eisu;
+    case Hash("Lang3"):
+      return UINT32_MAX;
+    case Hash("Lang4"):
+      return UINT32_MAX;
+    case Hash("MediaTrackNext"):
+      return UINT32_MAX;
+    case Hash("MediaTrackPrevious"):
+      return UINT32_MAX;
+    case Hash("MediaStop"):
+      return UINT32_MAX;
+    case Hash("Eject"):
+      return UINT32_MAX;
+    case Hash("MediaPlayPause"):
+      return UINT32_MAX;
+    case Hash("MediaSelect"):
+      return UINT32_MAX;
+    case Hash("LaunchMail"):
+      return UINT32_MAX;
+    case Hash("LaunchApp2"):
+      return UINT32_MAX;
+    case Hash("LaunchApp1"):
+      return UINT32_MAX;
+    case Hash("BrowserSearch"):
+      return UINT32_MAX;
+    case Hash("BrowserHome"):
+      return UINT32_MAX;
+    case Hash("BrowserBack"):
+      return UINT32_MAX;
+    case Hash("BrowserForward"):
+      return UINT32_MAX;
+    case Hash("BrowserStop"):
+      return UINT32_MAX;
+    case Hash("BrowserRefresh"):
+      return UINT32_MAX;
+    case Hash("BrowserFavorites"):
+      return UINT32_MAX;
+    case Hash("Sleep"):
+      return UINT32_MAX;
+    case Hash("WakeUp"):
+      return UINT32_MAX;
+    default:
+      return UINT32_MAX;
   }
-
-  CGKeyCode code;
-  UniChar character = key.c_str()[0];
-
-  LOG("target character: " << character);
-
-  auto charStrRef =
-      CFStringCreateWithCharacters(kCFAllocatorDefault, &character, 1);
-
-  if (!CFDictionaryGetValueIfPresent(charToCodeDict, charStrRef,
-                                     (const void**)&code)) {
-    LOG("cannot find key code mapping");
-    return UINT32_MAX;
-  }
-
-  CFRelease(charStrRef);
-
-  return code;
 }
 
 UInt32 MapCarbonModifierKey(const std::string& key) {
   switch (Hash(key.c_str())) {
-    case Hash("shift"):
+    case Hash("Control"):
+      return controlKey;
+    case Hash("ControlRight"):
+      return controlKey;
+    case Hash("ControlLeft"):
+      return controlKey;
+    case Hash("Shift"):
       return shiftKey;
-    case Hash("option"):
+    case Hash("ShiftRight"):
+      return shiftKey;
+    case Hash("ShiftLeft"):
+      return shiftKey;
+    case Hash("Alt"):
       return optionKey;
-    case Hash("alt"):
+    case Hash("AltRight"):
       return optionKey;
-    case Hash("alt | option"):
+    case Hash("AltLeft"):
       return optionKey;
-    case Hash("control"):
-      return controlKey;
-    case Hash("ctrl"):
-      return controlKey;
-    case Hash("command"):
+    case Hash("Meta"):
       return cmdKey;
-    case Hash("cmd"):
+    case Hash("MetaRight"):
       return cmdKey;
-    case Hash("command | control"):
-      return cmdKey;
-    case Hash("cmd | ctrl"):
+    case Hash("MetaLeft"):
       return cmdKey;
     default:
       return UINT32_MAX;
@@ -398,7 +504,7 @@ Result Activate() {
 
       LOG("start message loop");
 
-      EventTargetRef target = GetEventDispatcherTarget();
+      EventTargetRef target = GetApplicationEventTarget();
       while (isActive.load(std::memory_order_acquire)) {
         EventRef event;
         if (ReceiveNextEvent(0, NULL, (kEventDurationSecond / 10), true,

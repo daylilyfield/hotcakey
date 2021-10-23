@@ -52,195 +52,502 @@ constexpr unsigned long long int Hash(const char* str,
 
 UINT MapWinVirtualKey(const std::string& key) {
   auto ch = key.c_str();
+  UINT scancode = 0;
 
   switch (Hash(ch)) {
     // modifiers key to ignore
-    case Hash("shift"):
+    case Hash("Control"):
+    case Hash("ControlRight"):
+    case Hash("ControlLeft"):
+    case Hash("Shift"):
+    case Hash("ShiftRight"):
+    case Hash("ShiftLeft"):
+    case Hash("Alt"):
+    case Hash("AltRight"):
+    case Hash("AltLeft"):
+    case Hash("Meta"):
+    case Hash("MetaRight"):
+    case Hash("MetaLeft"):
       return UINT32_MAX;
-    case Hash("option"):
-      return UINT32_MAX;
-    case Hash("alt"):
-      return UINT32_MAX;
-    case Hash("alt | option"):
-      return UINT32_MAX;
-    case Hash("control"):
-      return UINT32_MAX;
-    case Hash("ctrl"):
-      return UINT32_MAX;
-    case Hash("command"):
-      return UINT32_MAX;
-    case Hash("cmd"):
-      return UINT32_MAX;
-    case Hash("command | control"):
-      return UINT32_MAX;
-    case Hash("cmd | ctrl"):
-      return UINT32_MAX;
-    // 1 : 1 paired on any keyboard
-    case Hash("f1"):
-      return VK_F1;
-    case Hash("f2"):
-      return VK_F2;
-    case Hash("f3"):
-      return VK_F3;
-    case Hash("f4"):
-      return VK_F4;
-    case Hash("f5"):
-      return VK_F5;
-    case Hash("f6"):
-      return VK_F6;
-    case Hash("f7"):
-      return VK_F7;
-    case Hash("f8"):
-      return VK_F8;
-    case Hash("f9"):
-      return VK_F9;
-    case Hash("f10"):
-      return VK_F10;
-    case Hash("f11"):
-      return VK_F11;
-    case Hash("f12"):
-      return VK_F12;
-    case Hash("f13"):
-      return VK_F13;
-    case Hash("f14"):
-      return VK_F14;
-    case Hash("f15"):
-      return VK_F15;
-    case Hash("f16"):
-      return VK_F16;
-    case Hash("f17"):
-      return VK_F17;
-    case Hash("f18"):
-      return VK_F18;
-    case Hash("f19"):
-      return VK_F19;
-    case Hash("f20"):
-      return VK_F20;
-    case Hash("f21"):
-      return VK_F21;
-    case Hash("f22"):
-      return VK_F22;
-    case Hash("f23"):
-      return VK_F23;
-    case Hash("f24"):
-      return VK_F24;
-    case Hash("space"):
-      return VK_SPACE;
-    case Hash("tab"):
-      return VK_TAB;
-    case Hash("capslock"):
-      return VK_CAPITAL;
-    case Hash("numlock"):
-      return VK_NUMLOCK;
-    case Hash("scrolllock"):
-      return VK_SCROLL;
-    case Hash("delete"):
-      return VK_DELETE;
-    case Hash("backspace"):
-      return VK_BACK;
-    case Hash("enter"):
-      return VK_RETURN;
-    case Hash("return"):
-      return VK_RETURN;
-    case Hash("arrowup"):
-      return VK_UP;
-    case Hash("arrowdown"):
-      return VK_DOWN;
-    case Hash("arrowleft"):
-      return VK_LEFT;
-    case Hash("arrowright"):
-      return VK_RIGHT;
-    case Hash("home"):
-      return VK_HOME;
-    case Hash("end"):
-      return VK_END;
-    case Hash("pageup"):
-      return VK_PRIOR;
-    case Hash("pagedown"):
-      return VK_NEXT;
-    case Hash("escape"):
-      return VK_ESCAPE;
-    case Hash("esc"):
-      return VK_ESCAPE;
-    case Hash("volumeup"):
-      return VK_VOLUME_UP;
-    case Hash("volumeedown"):
-      return VK_VOLUME_DOWN;
-    case Hash("volumemute"):
-      return VK_VOLUME_MUTE;
-    case Hash("medianext"):
-      return VK_MEDIA_NEXT_TRACK;
-    case Hash("mediaprev"):
-      return VK_MEDIA_PREV_TRACK;
-    case Hash("mediastop"):
-      return VK_MEDIA_STOP;
-    case Hash("mediaplaypause"):
-      return VK_MEDIA_PLAY_PAUSE;
-    case Hash("print"):
-      return VK_PRINT;
-    case Hash("num0"):
-      return VK_NUMPAD0;
-    case Hash("num1"):
-      return VK_NUMPAD1;
-    case Hash("num2"):
-      return VK_NUMPAD2;
-    case Hash("num3"):
-      return VK_NUMPAD3;
-    case Hash("num4"):
-      return VK_NUMPAD4;
-    case Hash("num5"):
-      return VK_NUMPAD5;
-    case Hash("num6"):
-      return VK_NUMPAD6;
-    case Hash("num7"):
-      return VK_NUMPAD7;
-    case Hash("num8"):
-      return VK_NUMPAD8;
-    case Hash("num9"):
-      return VK_NUMPAD9;
-    case Hash("numadd"):
-      return VK_ADD;
-    case Hash("numsub"):
-      return VK_SUBTRACT;
-    case Hash("nummult"):
-      return VK_MULTIPLY;
-    case Hash("numdiv"):
-      return VK_DIVIDE;
-    case Hash("numdec"):
-      return VK_DECIMAL;
+
+    case Hash("KeyA"):
+      scancode = 0x001E;
+      break;
+    case Hash("KeyB"):
+      scancode = 0x0030;
+      break;
+    case Hash("KeyC"):
+      scancode = 0x002E;
+      break;
+    case Hash("KeyD"):
+      scancode = 0x0020;
+      break;
+    case Hash("KeyE"):
+      scancode = 0x0012;
+      break;
+    case Hash("KeyF"):
+      scancode = 0x0021;
+      break;
+    case Hash("KeyG"):
+      scancode = 0x0022;
+      break;
+    case Hash("KeyH"):
+      scancode = 0x0023;
+      break;
+    case Hash("KeyI"):
+      scancode = 0x0017;
+      break;
+    case Hash("KeyJ"):
+      scancode = 0x0024;
+      break;
+    case Hash("KeyK"):
+      scancode = 0x0025;
+      break;
+    case Hash("KeyL"):
+      scancode = 0x0026;
+      break;
+    case Hash("KeyM"):
+      scancode = 0x0032;
+      break;
+    case Hash("KeyN"):
+      scancode = 0x0031;
+      break;
+    case Hash("KeyO"):
+      scancode = 0x0018;
+      break;
+    case Hash("KeyP"):
+      scancode = 0x0019;
+      break;
+    case Hash("KeyQ"):
+      scancode = 0x0010;
+      break;
+    case Hash("KeyR"):
+      scancode = 0x0013;
+      break;
+    case Hash("KeyS"):
+      scancode = 0x001F;
+      break;
+    case Hash("KeyT"):
+      scancode = 0x0014;
+      break;
+    case Hash("KeyU"):
+      scancode = 0x0016;
+      break;
+    case Hash("KeyV"):
+      scancode = 0x002F;
+      break;
+    case Hash("KeyW"):
+      scancode = 0x0011;
+      break;
+    case Hash("KeyX"):
+      scancode = 0x002D;
+      break;
+    case Hash("KeyY"):
+      scancode = 0x0015;
+      break;
+    case Hash("KeyZ"):
+      scancode = 0x002C;
+      break;
+    case Hash("Digit1"):
+      scancode = 0x0002;
+      break;
+    case Hash("Digit2"):
+      scancode = 0x0003;
+      break;
+    case Hash("Digit3"):
+      scancode = 0x0004;
+      break;
+    case Hash("Digit4"):
+      scancode = 0x0005;
+      break;
+    case Hash("Digit5"):
+      scancode = 0x0006;
+      break;
+    case Hash("Digit6"):
+      scancode = 0x0007;
+      break;
+    case Hash("Digit7"):
+      scancode = 0x0008;
+      break;
+    case Hash("Digit8"):
+      scancode = 0x0009;
+      break;
+    case Hash("Digit9"):
+      scancode = 0x000A;
+      break;
+    case Hash("Digit0"):
+      scancode = 0x000B;
+      break;
+    case Hash("Minus"):
+      scancode = 0x000C;
+      break;
+    case Hash("Equal"):
+      scancode = 0x000D;
+      break;
+    case Hash("BracketLeft"):
+      scancode = 0x001A;
+      break;
+    case Hash("BracketRight"):
+      scancode = 0x001B;
+      break;
+    case Hash("Backslash"):
+      scancode = 0x002B;
+      break;
+    case Hash("Semicolon"):
+      scancode = 0x0027;
+      break;
+    case Hash("Quote"):
+      scancode = 0x0028;
+      break;
+    case Hash("Backquote"):
+      scancode = 0x0029;
+      break;
+    case Hash("Comma"):
+      scancode = 0x0033;
+      break;
+    case Hash("Period"):
+      scancode = 0x0034;
+      break;
+    case Hash("Slash"):
+      scancode = 0x0035;
+      break;
+    case Hash("Enter"):
+      scancode = 0x001C;
+      break;
+    case Hash("Escape"):
+      scancode = 0x0001;
+      break;
+    case Hash("Backspace"):
+      scancode = 0x000E;
+      break;
+    case Hash("Tab"):
+      scancode = 0x000F;
+      break;
+    case Hash("Space"):
+      scancode = 0x0039;
+      break;
+    case Hash("CapsLock"):
+      scancode = 0x003A;
+      break;
+    case Hash("F1"):
+      scancode = 0x003B;
+      break;
+    case Hash("F2"):
+      scancode = 0x003C;
+      break;
+    case Hash("F3"):
+      scancode = 0x003D;
+      break;
+    case Hash("F4"):
+      scancode = 0x003E;
+      break;
+    case Hash("F5"):
+      scancode = 0x003F;
+      break;
+    case Hash("F6"):
+      scancode = 0x0040;
+      break;
+    case Hash("F7"):
+      scancode = 0x0041;
+      break;
+    case Hash("F8"):
+      scancode = 0x0042;
+      break;
+    case Hash("F9"):
+      scancode = 0x0043;
+      break;
+    case Hash("F10"):
+      scancode = 0x0044;
+      break;
+    case Hash("F11"):
+      scancode = 0x0057;
+      break;
+    case Hash("F12"):
+      scancode = 0x0058;
+      break;
+    case Hash("F13"):
+      scancode = 0x0064;
+      break;
+    case Hash("F14"):
+      scancode = 0x0065;
+      break;
+    case Hash("F15"):
+      scancode = 0x0066;
+      break;
+    case Hash("F16"):
+      scancode = 0x0067;
+      break;
+    case Hash("F17"):
+      scancode = 0x0068;
+      break;
+    case Hash("F18"):
+      scancode = 0x0069;
+      break;
+    case Hash("F19"):
+      scancode = 0x006A;
+      break;
+    case Hash("F20"):
+      scancode = 0x006B;
+      break;
+    case Hash("F21"):
+      scancode = 0x006C;
+      break;
+    case Hash("F22"):
+      scancode = 0x006D;
+      break;
+    case Hash("F23"):
+      scancode = 0x006E;
+      break;
+    case Hash("F24"):
+      scancode = 0x0076;
+      break;
+    case Hash("PrintScreen"):
+      scancode = 0xE037;
+      break;
+    case Hash("ScrollLock"):
+      scancode = 0x0046;
+      break;
+    case Hash("Pause"):
+      scancode = 0x0045;
+      break;
+    case Hash("Insert"):
+      scancode = 0xE052;
+      break;
+    case Hash("Home"):
+      scancode = 0xE047;
+      break;
+    case Hash("PageUp"):
+      scancode = 0xE049;
+      break;
+    case Hash("PageDown"):
+      scancode = 0xE051;
+      break;
+    case Hash("Delete"):
+      scancode = 0xE053;
+      break;
+    case Hash("End"):
+      scancode = 0xE04F;
+      break;
+    case Hash("ArrowUp"):
+      scancode = 0xE048;
+      break;
+    case Hash("ArrowDown"):
+      scancode = 0xE050;
+      break;
+    case Hash("ArrowRight"):
+      scancode = 0xE04D;
+      break;
+    case Hash("ArrowLeft"):
+      scancode = 0xE04B;
+      break;
+    case Hash("NumLock"):
+      scancode = 0xE045;
+      break;
+    case Hash("NumpadDivide"):
+      scancode = 0xE035;
+      break;
+    case Hash("NumpadMultiply"):
+      scancode = 0x0037;
+      break;
+    case Hash("NumpadSubtract"):
+      scancode = 0x004A;
+      break;
+    case Hash("NumpadAdd"):
+      scancode = 0x004E;
+      break;
+    case Hash("NumpadEnter"):
+      scancode = 0xE01C;
+      break;
+    case Hash("Numpad1"):
+      scancode = 0x004F;
+      break;
+    case Hash("Numpad2"):
+      scancode = 0x0050;
+      break;
+    case Hash("Numpad3"):
+      scancode = 0x0051;
+      break;
+    case Hash("Numpad4"):
+      scancode = 0x004B;
+      break;
+    case Hash("Numpad5"):
+      scancode = 0x004C;
+      break;
+    case Hash("Numpad6"):
+      scancode = 0x004D;
+      break;
+    case Hash("Numpad7"):
+      scancode = 0x0047;
+      break;
+    case Hash("Numpad8"):
+      scancode = 0x0048;
+      break;
+    case Hash("Numpad9"):
+      scancode = 0x0049;
+      break;
+    case Hash("Numpad0"):
+      scancode = 0x0052;
+      break;
+    case Hash("NumpadDecimal"):
+      scancode = 0x0053;
+      break;
+    case Hash("IntlBackslash"):
+      scancode = 0x0056;
+      break;
+    case Hash("ContextMenu"):
+      scancode = 0xE05D;
+      break;
+    case Hash("NumpadEqual"):
+      scancode = 0x0059;
+      break;
+    case Hash("Power"):
+      scancode = 0xE05E;
+      break;
+    case Hash("Help"):
+      scancode = 0xE03B;
+      break;
+    case Hash("Undo"):
+      scancode = 0xE008;
+      break;
+    case Hash("Cut"):
+      scancode = 0xE017;
+      break;
+    case Hash("Copy"):
+      scancode = 0xE018;
+      break;
+    case Hash("Paste"):
+      scancode = 0xE00A;
+      break;
+    case Hash("AudioVolumeMute"):
+      scancode = 0xE020;
+      break;
+    case Hash("AudioVolumeUp"):
+      scancode = 0xE030;
+      break;
+    case Hash("AudioVolumeDown"):
+      scancode = 0xE02E;
+      break;
+    case Hash("NumpadComma"):
+      scancode = 0x007E;
+      break;
+    case Hash("IntlRo"):
+      scancode = 0x0073;
+      break;
+    case Hash("KanaMode"):
+      scancode = 0x0070;
+      break;
+    case Hash("IntlYen"):
+      scancode = 0x007D;
+      break;
+    case Hash("Convert"):
+      scancode = 0x0079;
+      break;
+    case Hash("NonConvert"):
+      scancode = 0x007B;
+      break;
+    case Hash("Lang1"):
+      scancode = 0x0072;
+      break;
+    case Hash("Lang2"):
+      scancode = 0x0071;
+      break;
+    case Hash("Lang3"):
+      scancode = 0x0078;
+      break;
+    case Hash("Lang4"):
+      scancode = 0x0077;
+      break;
+    case Hash("MediaTrackNext"):
+      scancode = 0xE019;
+      break;
+    case Hash("MediaTrackPrevious"):
+      scancode = 0xE010;
+      break;
+    case Hash("MediaStop"):
+      scancode = 0xE024;
+      break;
+    case Hash("Eject"):
+      scancode = 0xE02C;
+      break;
+    case Hash("MediaPlayPause"):
+      scancode = 0xE022;
+      break;
+    case Hash("MediaSelect"):
+      scancode = 0xE06D;
+      break;
+    case Hash("LaunchMail"):
+      scancode = 0xE06C;
+      break;
+    case Hash("LaunchApp2"):
+      scancode = 0xE021;
+      break;
+    case Hash("LaunchApp1"):
+      scancode = 0xE06B;
+      break;
+    case Hash("BrowserSearch"):
+      scancode = 0xE065;
+      break;
+    case Hash("BrowserHome"):
+      scancode = 0xE032;
+      break;
+    case Hash("BrowserBack"):
+      scancode = 0xE06A;
+      break;
+    case Hash("BrowserForward"):
+      scancode = 0xE069;
+      break;
+    case Hash("BrowserStop"):
+      scancode = 0xE068;
+      break;
+    case Hash("BrowserRefresh"):
+      scancode = 0xE067;
+      break;
+    case Hash("BrowserFavorites"):
+      scancode = 0xE066;
+      break;
+    case Hash("Sleep"):
+      scancode = 0xE05F;
+      break;
+    case Hash("WakeUp"):
+      scancode = 0xE063;
+      break;
+    default:
+      scancode = UINT32_MAX;
+      break;
   }
 
-  auto first = ch[0];
-  if (first <= 0xFFFF) {
-    auto vk = VkKeyScanW(static_cast<WCHAR>(first));
-    return (vk > -1) ? LOBYTE(vk) : byte(first);
-  }
+  auto layout = GetKeyboardLayout(0);
+  auto vk = MapVirtualKeyEx(scancode, MAPVK_VSC_TO_VK, layout);
 
-  return UINT32_MAX;
+  return vk == 0 ? UINT32_MAX : vk;
 }
 
 UINT MapWinModifierKey(const std::string& key) {
   switch (Hash(key.c_str())) {
-    case Hash("shift"):
+    case Hash("Control"):
+      return MOD_CONTROL;
+    case Hash("ControlRight"):
+      return MOD_CONTROL;
+    case Hash("ControlLeft"):
+      return MOD_CONTROL;
+    case Hash("Shift"):
       return MOD_SHIFT;
-    case Hash("option"):
+    case Hash("ShiftRight"):
+      return MOD_SHIFT;
+    case Hash("ShiftLeft"):
+      return MOD_SHIFT;
+    case Hash("Alt"):
       return MOD_ALT;
-    case Hash("alt"):
+    case Hash("AltRight"):
       return MOD_ALT;
-    case Hash("alt | option"):
+    case Hash("AltLeft"):
       return MOD_ALT;
-    case Hash("control"):
-      return MOD_CONTROL;
-    case Hash("ctrl"):
-      return MOD_CONTROL;
-    case Hash("command"):
-      return MOD_CONTROL;
-    case Hash("cmd"):
-      return MOD_CONTROL;
-    case Hash("command | control"):
-      return MOD_CONTROL;
-    case Hash("cmd | ctrl"):
-      return MOD_CONTROL;
+    case Hash("Meta"):
+      return MOD_WIN;
+    case Hash("MetaRight"):
+      return MOD_WIN;
+    case Hash("MetaLeft"):
+      return MOD_WIN;
     default:
       return UINT32_MAX;
   }
@@ -422,6 +729,9 @@ RegistrationResult Register(
 
   UINT key = ToWinKey(keys);
   UINT modifier = ToWinModifiers(keys) + MOD_NOREPEAT;  // ToWinModifiers(keys);
+
+  LOG("key: " << key);
+  LOG("modifier: " << modifier);
 
   auto id = ++eventHotKeyIdSequence;
 
