@@ -41,7 +41,15 @@ main()
 
 ## examples
 
-please check out the `./examples` directory. you can find some examples for node.js and electron there.
+please check out the [./examples](./examples) directory. you can find some examples for [node.js](./examples/node) and [electron](./examples/electron) there. if you would like to run examples on your computer, please clone this repository, open your terminal, and then input the commands below.
+
+```sh
+# run node.js example
+npm run examples:node
+
+# run electron example
+npm run examples:electron
+```
 
 ## available physical keycodes
 
