@@ -232,9 +232,3 @@ function check(condition: boolean, message: string) {
     throw new Error('[hotcakey:err] ' + message)
   }
 }
-
-export default {
-  activate,
-  inactivate,
-  register,
-}
