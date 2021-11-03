@@ -12,7 +12,7 @@ import bindings from 'bindings'
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
  */
-const codes = [
+const keyCodes = [
   'KeyA',
   'KeyB',
   'KeyC',
@@ -176,15 +176,33 @@ const codes = [
   'Meta',
 ] as const
 
+const errorCodes = [
+  'cannotRegisterHotKey',
+  'cannotUnregisterHotKey',
+  'cannotHandleHotKeyEvent',
+] as const
+
 /**
  * `Code` represents a physical key on the keyboard.
+ *
+ * @deprecated use {@see KeyCode}
  */
-export type Code = typeof codes[number]
+export type Code = typeof keyCodes[number]
+
+/**
+ * `KeyCode` represents a physical key on the keyboard.
+ */
+export type KeyCode = typeof keyCodes[number]
+
+/**
+ * `ErrorCode` represents an error code from the hotcakey native addon.
+ */
+export type ErrorCode = typeof errorCodes[number]
 
 export type Option = { verbose: boolean }
 export type Unsubscribe = () => void
 export type HotKeyEvent = { type: 'keydown' | 'keyup'; time: number }
-export type ErrorEvent = { type: 'error'; code: string; time: number }
+export type ErrorEvent = { type: 'error'; code: ErrorCode; time: number }
 export type Event = HotKeyEvent | ErrorEvent
 export type Listener = (event: Event) => void
 
@@ -202,19 +220,19 @@ export function inactivate(): Promise<void> {
   return addon.inactivate()
 }
 
-export function register(codes: Code[], listener: Listener): Unsubscribe {
+export function register(codes: KeyCode[], listener: Listener): Unsubscribe {
   check(codes && codes.length > 0, 'missing shortcut keys to register')
   check(!!listener, 'missing hotkey listener')
 
   log('codes to register:', codes)
 
-  check(codes.every(isCode), `some key is not a type of Code`)
+  check(codes.every(isCode), `some key is not a type of KeyCode`)
 
   return addon.register(codes, listener)
 }
 
-function isCode(suspect: Code): boolean {
-  return codes.includes(suspect)
+function isCode(suspect: KeyCode): boolean {
+  return keyCodes.includes(suspect)
 }
 
 //

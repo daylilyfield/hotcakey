@@ -102,18 +102,43 @@ void Unregister(const Napi::CallbackInfo& info) {
 
   auto registration = static_cast<hotcakey::Registration*>(info.Data());
 
-  if (registration != nullptr) {
-    LOG("valid registration accepted");
-    auto result = hotcakey::Unregister(*registration);
-
-    if (result != hotcakey::Result::kSuccess) {
-      Napi::TypeError::New(info.Env(), "cannot unregister listener")
-          .ThrowAsJavaScriptException();
-      return;
-    }
-
-    delete registration;
+  if (registration == nullptr) {
+    LOG("registration not found within function scope");
+    return;
   }
+
+  LOG("valid registration accepted");
+
+  auto result = hotcakey::Unregister(*registration);
+
+  if (result != hotcakey::Result::kSuccess) {
+    auto callback = tsfs.at(*registration);
+
+    if (callback != nullptr) {
+      auto value =
+          new hotcakey::Event(hotcakey::EventType::kError, std::time(nullptr));
+      auto status = callback.BlockingCall(value, [](Napi::Env env,
+                                                    Napi::Function jsCallback,
+                                                    hotcakey::Event* value) {
+        auto event = Napi::Object::New(env);
+        event["type"] = Napi::String::New(env, hotcakey::ToString(value->type));
+        event["code"] = Napi::String::New(env, "cannotUnegisterHotKey");
+        event["time"] = Napi::Number::New(env, value->time);
+
+        delete value;
+      });
+
+      if (status != napi_ok) {
+        ERR("failed to invoke thread safe function");
+      }
+
+      callback.Release();
+
+      tsfs.erase(*registration);
+    }
+  }
+
+  delete registration;
 }
 
 Napi::Value Register(const Napi::CallbackInfo& info) {
@@ -160,8 +185,17 @@ Napi::Value Register(const Napi::CallbackInfo& info) {
       });
 
   if (result != hotcakey::Result::kSuccess) {
+    auto event = Napi::Object::New(env);
+    event["type"] =
+        Napi::String::New(env, hotcakey::ToString(hotcakey::EventType::kError));
+    event["code"] = Napi::String::New(env, "cannotRegisterHotKey");
+    event["time"] = Napi::Number::New(env, std::time(nullptr));
+
+    callback({event});
+
     // otherwise you cannot shutdown node.js main loop
     listener.Release();
+
     return env.Undefined();
   }
 

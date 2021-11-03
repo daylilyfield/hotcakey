@@ -1,6 +1,6 @@
 # 🥞 hotcakey 🥞
 
-hotcaKey is the global shortcut (aka hotkey) module for node.js and electron.
+hotcakey is the global shortcut (aka hotkey) module for node.js and electron.
 
 hotcakey is now actively under deploment, so api may have breaking changes even in a short term.
 

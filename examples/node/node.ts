@@ -8,14 +8,14 @@ async function main() {
   console.log('⏰ exit automatically in 5 seconds')
 
   hotcakey.register(['Shift', 'Space'], (event) => {
-    console.log('%s event detected at %d', event.type, event.time)
+    console.log('👇 %s event detected at %d', event.type, event.time)
   })
 
   await new Promise((resolve) => setTimeout(resolve, 5000))
 
   await hotcakey.inactivate()
 
-  console.log('--- yumyum ---')
+  console.log('😋 yumyum 😋')
 }
 
 main()

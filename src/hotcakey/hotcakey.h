@@ -22,7 +22,7 @@ inline std::string ToString(Result result) {
   }
 }
 
-enum EventType { kKeyDown, kKeyUp };
+enum EventType { kKeyDown, kKeyUp, kError };
 
 using Registration = unsigned long;
 using RegistrationResult = std::pair<Result, Registration>;
@@ -43,6 +43,8 @@ inline std::string ToString(EventType type) {
       return "keydown";
     case kKeyUp:
       return "keyup";
+    case kError:
+      return "error";
   }
 }
 
